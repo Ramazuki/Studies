@@ -14,7 +14,7 @@ helpstr = """Для информации по жителям используй�
 Личности - показать все имена
 Королевства - показать все королевства
 Какой [возраст, профессия, раса, королевство] у [имя] - получить значение свойства данной личности
-Кто [младше/старше {число}, расы {название расы (elf, dwarf, human)}, живет в {королевство}, работает {профессия(hunter, knight, king, peasant)}]
+Кто живет в {королевство}
 Может [имя] жить в [королевство] - может ли [имя] переехать в [королевство]
 Помощь - вывести эту строку ещё раз
 Выход - завершить работу"""
@@ -23,9 +23,31 @@ print(helpstr)
 queue = input()
 while queue != "Выход":
     if queue.startswith("Какой"):
-        pass
-    elif queue.startswith("Кто"):
-        pass
+        l = queue.split(' ')
+        name = l[-1]
+        print(f'Имя: {name}')
+        name = str(name).lower()
+        for item in l:
+            item = str(item).lower()
+            if item == 'у':
+                break
+            if item == 'возраст':
+                q = list(prolog.query(f'age({name},N)'))[0].get('N')
+                print(f'Возраст: {q}')
+            if item == 'раса':
+                q = list(prolog.query(f'race({name},R)'))[0].get('R')
+                print(f'Раса: {q}')
+            if item == 'королевство':
+                q = list(prolog.query(f'where({name}, K'))[0].get('K')
+                print(f'Живёт в {str(q).capitalize()}')
+            if item == 'профессия':
+                q = list(prolog.query(f'proffesion({name}, P)'))[0].get('P')
+                print(f'Профессия: {q}')
+    elif queue.startswith("Кто живет в"):
+        kingdom = queue.split(' ')[-1].lower()
+        q = list(prolog.query(f'where(N,{kingdom})'))
+        for p in q:
+            print(str(p.get('N')).capitalize())
     elif queue.startswith("Может"):
         l = queue.split(" ")
         name = l[1].lower()
@@ -36,14 +58,13 @@ while queue != "Выход":
             print('Может')
         else:
             do_live = handle_tf(list(prolog.query(f'do_live({name}, {kingdom})')))
+            is_king = handle_tf(list(prolog.query(f"is_king({name})")))
             if do_live:
                 print('Уже живет здесь')
-                continue
-            is_king = handle_tf(list(prolog.query(f"is_king({name})")))
-            if is_king:
+            elif is_king:
                 print('Не может, так как является королём')
-                continue
-            print('Нарушает рассовый закон')
+            else:
+                print('Нарушает рассовый закон')
 
     elif queue == "Личности":
         persons = prolog.query("person(Who,_,_,_,_)")
