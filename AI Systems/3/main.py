@@ -38,8 +38,8 @@ while queue != "Выход":
                 q = list(prolog.query(f'race({name},R)'))[0].get('R')
                 print(f'Раса: {q}')
             if item == 'королевство':
-                q = list(prolog.query(f'where({name}, K'))[0].get('K')
-                print(f'Живёт в {str(q).capitalize()}')
+                q = list(prolog.query(f'where({name}, K)'))[0].get('K')
+                print(f'Живёт в {q.capitalize()}')
             if item == 'профессия':
                 q = list(prolog.query(f'proffesion({name}, P)'))[0].get('P')
                 print(f'Профессия: {q}')
