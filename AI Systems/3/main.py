@@ -35,9 +35,15 @@ while queue != "Выход":
         if ans:
             print('Может')
         else:
+            do_live = handle_tf(list(prolog.query(f'do_live({name}, {kingdom})')))
+            if do_live:
+                print('Уже живет здесь')
+                continue
             is_king = handle_tf(list(prolog.query(f"is_king({name})")))
             if is_king:
                 print('Не может, так как является королём')
+                continue
+            print('Нарушает рассовый закон')
 
     elif queue == "Личности":
         persons = prolog.query("person(Who,_,_,_,_)")
